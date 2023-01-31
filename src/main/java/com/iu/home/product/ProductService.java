@@ -1,7 +1,41 @@
 package com.iu.home.product;
 
-public class ProductService {
+import java.util.List;
 
+public class ProductService {
+	
+	//1. 결합도가 높다(강하다)
+	private ProductDAO productDAO = new ProductDAO();
+	
+	{	//초기화 블럭
+		this.productDAO = new ProductDAO();
+	}
+	
+	//2. 생성자
+	public ProductService() {
+			this.productDAO = new ProductDAO();
+	}
+	
+	//3.setter, getter
+	//결합도가 낮다
+	public void setProductDAO(ProductDAO productDAO) {
+		this.productDAO = productDAO;
+	}
+
+	public int setAddProduct(ProductDTO productDTO, List<ProductOptionDTO> ar) throws Exception{
+		Long productNum = productDAO.getProductNum();
+		productDTO.setProductnum(productNum);
+		int result = productDAO.setAddProduct(productDTO);
+		
+		for(ProductOptionDTO productOptionDTO : ar) {
+			productOptionDTO.setProductnum(productNum);
+			result = productDAO.setAddProductOption(productOptionDTO);	
+		}
+		
+		return result;
+		
+	}
+	
 	public static void main(String[] args) {
 		ProductDAO productDAO = new ProductDAO();
 		
